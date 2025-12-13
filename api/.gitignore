@@ -1,0 +1,8 @@
+/.vs
+/SistemaMedico/bin/
+/SistemaMedico/obj/
+/.vs/SistemaMedico/
+/.vs/ProjectEvaluation/sistemamedico.strings.v9.bin
+/.vs/ProjectEvaluation/sistemamedico.metadata.v9.bin
+/.vs/ProjectEvaluation/sistemamedico.projects.v9.bin
+/SistemaMedico/appsettings.development.json

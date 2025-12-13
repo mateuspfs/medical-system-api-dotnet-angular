@@ -1,0 +1,303 @@
+<div class="px-4 py-6 sm:px-0">
+  <div class="card">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-gray-900">Listagem de Doutores</h2>
+      <button (click)="openAddModal()" class="btn-primary">
+        Adicionar Doutor
+      </button>
+    </div>
+
+    <div class="mb-4 flex gap-4">
+      <input
+        type="text"
+        [(ngModel)]="search"
+        placeholder="Buscar doutor"
+        class="input-field flex-1"
+      />
+      <select
+        [(ngModel)]="filterEspecialidade"
+        class="input-field"
+      >
+        <option value="">Todas as especialidades</option>
+        <option *ngFor="let esp of especialidades" [value]="esp.nome">
+          {{ esp.nome }}
+        </option>
+      </select>
+      <button (click)="onFilter()" class="btn-primary">
+        Filtrar
+      </button>
+    </div>
+
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Telefone</th>
+            <th>CPF</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let doutor of doutores">
+            <td>{{ doutor.nome }}</td>
+            <td>{{ doutor.email }}</td>
+            <td>{{ maskPhone(doutor.telefone) }}</td>
+            <td>{{ maskCPF(doutor.cpf) }}</td>
+            <td>
+              <div class="flex gap-2">
+                <button
+                  (click)="openInfoModal(doutor)"
+                  class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm"
+                >
+                  Info
+                </button>
+                <button
+                  (click)="openEditModal(doutor)"
+                  class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm"
+                >
+                  Editar
+                </button>
+                <button
+                  (click)="openDeleteModal(doutor)"
+                  class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
+                >
+                  Excluir
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <app-pagination
+      [totalPages]="totalPages"
+      [currentPage]="currentPage"
+      (pageChange)="onPageChange($event)"
+    ></app-pagination>
+  </div>
+</div>
+
+<!-- Add Modal -->
+<app-modal
+  title="Adicionar Doutor"
+  [show]="showAddModal"
+  (close)="showAddModal = false"
+>
+  <div class="space-y-4 max-h-96 overflow-y-auto">
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+      <input
+        type="text"
+        [(ngModel)]="newDoutor.nome"
+        class="input-field"
+        placeholder="Nome do Doutor"
+      />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+      <input
+        type="email"
+        [(ngModel)]="newDoutor.email"
+        class="input-field"
+        placeholder="Email do Doutor"
+      />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+      <input
+        type="text"
+        [(ngModel)]="newDoutor.telefone"
+        (input)="onPhoneInput($event, 'newDoutor')"
+        maxlength="15"
+        class="input-field"
+        placeholder="(00) 00000-0000"
+      />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">CPF</label>
+      <input
+        type="text"
+        [(ngModel)]="newDoutor.cpf"
+        (input)="onCPFInput($event, 'newDoutor')"
+        maxlength="14"
+        class="input-field"
+        placeholder="000.000.000-00"
+      />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
+      <input
+        type="text"
+        [(ngModel)]="newDoutor.endereco"
+        class="input-field"
+        placeholder="Endereço do Doutor"
+      />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Documento</label>
+      <input
+        type="file"
+        (change)="onFileSelected($event, 'add')"
+        accept=".png,.jpg"
+        class="input-field"
+      />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Especialidades</label>
+      <div class="border border-gray-300 rounded-lg p-4 max-h-40 overflow-y-auto">
+        <div *ngFor="let esp of especialidades" class="flex items-center mb-2">
+          <input
+            type="checkbox"
+            [checked]="isEspecialidadeSelected(esp.id, 'add')"
+            (change)="toggleEspecialidade(esp.id, 'add')"
+            class="mr-2"
+          />
+          <label>{{ esp.nome }}</label>
+        </div>
+      </div>
+    </div>
+    <div class="flex justify-end gap-2 mt-6">
+      <button (click)="showAddModal = false" class="btn-secondary">
+        Cancelar
+      </button>
+      <button (click)="addDoutor()" class="btn-primary">
+        Adicionar
+      </button>
+    </div>
+  </div>
+</app-modal>
+
+<!-- Edit Modal -->
+<app-modal
+  title="Editar Doutor"
+  [show]="showEditModal"
+  (close)="showEditModal = false"
+>
+  <div class="space-y-4 max-h-96 overflow-y-auto">
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+      <input
+        type="text"
+        [(ngModel)]="editDoutor.nome"
+        class="input-field"
+        placeholder="Nome do Doutor"
+      />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+      <input
+        type="email"
+        [(ngModel)]="editDoutor.email"
+        class="input-field"
+        placeholder="Email do Doutor"
+      />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+      <input
+        type="text"
+        [(ngModel)]="editDoutor.telefone"
+        (input)="onPhoneInput($event, 'editDoutor')"
+        maxlength="15"
+        class="input-field"
+        placeholder="(00) 00000-0000"
+      />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">CPF</label>
+      <input
+        type="text"
+        [(ngModel)]="editDoutor.cpf"
+        (input)="onCPFInput($event, 'editDoutor')"
+        maxlength="14"
+        class="input-field"
+        placeholder="000.000.000-00"
+        readonly
+      />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
+      <input
+        type="text"
+        [(ngModel)]="editDoutor.endereco"
+        class="input-field"
+        placeholder="Endereço do Doutor"
+      />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Documento</label>
+      <input
+        type="file"
+        (change)="onFileSelected($event, 'edit')"
+        accept=".png,.jpg"
+        class="input-field"
+      />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Especialidades</label>
+      <div class="border border-gray-300 rounded-lg p-4 max-h-40 overflow-y-auto">
+        <div *ngFor="let esp of especialidades" class="flex items-center mb-2">
+          <input
+            type="checkbox"
+            [checked]="isEspecialidadeSelected(esp.id, 'edit')"
+            (change)="toggleEspecialidade(esp.id, 'edit')"
+            class="mr-2"
+          />
+          <label>{{ esp.nome }}</label>
+        </div>
+      </div>
+    </div>
+    <div class="flex justify-end gap-2 mt-6">
+      <button (click)="showEditModal = false" class="btn-secondary">
+        Cancelar
+      </button>
+      <button (click)="updateDoutor()" class="btn-primary">
+        Salvar
+      </button>
+    </div>
+  </div>
+</app-modal>
+
+<!-- Info Modal -->
+<app-modal
+  title="Detalhes do Doutor"
+  [show]="showInfoModal"
+  (close)="showInfoModal = false"
+>
+  <div class="space-y-4" *ngIf="doutorInfo">
+    <p><strong>Nome:</strong> {{ doutorInfo.nome }}</p>
+    <p><strong>CPF:</strong> {{ maskCPF(doutorInfo.cpf) }}</p>
+    <p><strong>Especialidade(s):</strong> {{ doutorInfo.especialidades }}</p>
+    <p><strong>Telefone:</strong> {{ maskPhone(doutorInfo.telefone) }}</p>
+    <p><strong>Email:</strong> {{ doutorInfo.email }}</p>
+    <p><strong>Endereço:</strong> {{ doutorInfo.endereco }}</p>
+    <div *ngIf="doutorInfo.documentoNome">
+      <p><strong>Documento:</strong></p>
+      <img [src]="getDocumentoImage(doutorInfo.documentoNome)" alt="Documento" class="max-w-full h-auto rounded-lg">
+    </div>
+  </div>
+</app-modal>
+
+<!-- Delete Modal -->
+<app-modal
+  title="Excluir Doutor"
+  [show]="showDeleteModal"
+  (close)="showDeleteModal = false"
+>
+  <div class="space-y-4">
+    <p>Você tem certeza que deseja excluir este Doutor?</p>
+    <p class="text-red-600 font-semibold">Essa ação é irreversível.</p>
+    <div class="flex justify-end gap-2 mt-6">
+      <button (click)="showDeleteModal = false" class="btn-secondary">
+        Cancelar
+      </button>
+      <button (click)="deleteDoutor()" class="btn-danger">
+        Excluir
+      </button>
+    </div>
+  </div>
+</app-modal>
+
