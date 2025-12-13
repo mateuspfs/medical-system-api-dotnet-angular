@@ -1,0 +1,14 @@
+<div class="flex justify-center items-center space-x-2 mt-6">
+  <button
+    *ngFor="let page of pages"
+    (click)="goToPage(page)"
+    [class.bg-blue-600]="page === currentPage"
+    [class.text-white]="page === currentPage"
+    [class.bg-white]="page !== currentPage"
+    [class.text-gray-700]="page !== currentPage"
+    class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-blue-50 transition-colors font-medium"
+  >
+    {{ page }}
+  </button>
+</div>
+

@@ -1,0 +1,25 @@
+<div class="px-4 py-6 sm:px-0">
+  <div class="card">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-gray-900">Listagem de Especialidades</h2>
+    </div>
+
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let especialidade of especialidades">
+            <td>{{ especialidade.id }}</td>
+            <td>{{ especialidade.nome }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
