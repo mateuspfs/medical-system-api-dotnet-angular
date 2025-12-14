@@ -1,10 +1,8 @@
 export interface PaginatedResponse<T> {
-  items: {
-    $values: T[];
-  };
+  items: T[];
   totalPages: number;
-  currentPage: number;
-  totalItems: number;
+  currentPage?: number;
+  totalItems?: number;
 }
 
 export interface PaginationParams {

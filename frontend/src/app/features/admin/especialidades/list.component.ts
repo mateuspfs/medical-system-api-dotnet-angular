@@ -19,7 +19,7 @@ export class EspecialidadesListComponent implements OnInit {
   loadData(): void {
     this.especialidadeService.getAll().subscribe({
       next: (response) => {
-        this.especialidades = response.$values;
+        this.especialidades = response;
       },
       error: (error) => console.error('Erro ao buscar especialidades:', error)
     });

@@ -38,7 +38,7 @@ export class PacientesListComponent implements OnInit {
 
     this.pacienteService.filter(this.search, params).subscribe({
       next: (response: PaginatedResponse<Paciente>) => {
-        this.pacientes = response.items.$values;
+        this.pacientes = response.items;
         this.totalPages = response.totalPages;
       },
       error: (error) => console.error('Erro ao buscar pacientes:', error)

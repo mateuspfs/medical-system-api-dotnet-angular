@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
 import { Doutor } from '../models/doutor.model';
+import { Especialidade } from '../models/especialidade.model';
 import { PaginatedResponse, PaginationParams } from '../models/pagination.model';
 
 @Injectable({
@@ -60,8 +61,8 @@ export class DoutorService {
     return this.api.get<PaginatedResponse<any>>(url);
   }
 
-  getEspecialidadesDoutor(token: string): Observable<{ $values: any[] }> {
-    return this.api.get<{ $values: any[] }>(`/Doutor/EspecialidadesDoutor?token=${token}`);
+  getEspecialidadesDoutor(token: string): Observable<Especialidade[]> {
+    return this.api.get<Especialidade[]>(`/Doutor/EspecialidadesDoutor?token=${token}`);
   }
 }
 

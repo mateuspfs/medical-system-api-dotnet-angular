@@ -38,7 +38,7 @@ export class AdminsListComponent implements OnInit {
     if (this.search) {
       this.adminService.filter(this.search, params).subscribe({
         next: (response: PaginatedResponse<Admin>) => {
-          this.admins = response.items.$values;
+          this.admins = response.items;
           this.totalPages = response.totalPages;
         },
         error: (error) => console.error('Erro ao buscar admins:', error)
@@ -46,7 +46,7 @@ export class AdminsListComponent implements OnInit {
     } else {
       this.adminService.getAll(params).subscribe({
         next: (response: PaginatedResponse<Admin>) => {
-          this.admins = response.items.$values;
+          this.admins = response.items;
           this.totalPages = response.totalPages;
         },
         error: (error) => console.error('Erro ao buscar admins:', error)

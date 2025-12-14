@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.EntityFrameworkCore;
 using SistemaMedico.Config;
 
 namespace SistemaMedico
@@ -16,23 +17,24 @@ namespace SistemaMedico
 
             services.AddMvc().AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
             });
 
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
-            // Configuração de Dependency Injection
             services.AddDependencyInjection(configuration);
 
-            
-            // Descomente para rodar as Seeders
+            // Rode seed apenas após as migrações estarem aplicadas (evita erro em Update-Database)
             using (var serviceScope = services.BuildServiceProvider().CreateScope())
             {
                 var dbContext = serviceScope.ServiceProvider.GetRequiredService<SistemaMedico.Data.SistemaMedicoDBContex>();
-                SistemaMedico.Data.DbSeeder.Seed(dbContext);
+                if (!dbContext.Database.GetPendingMigrations().Any())
+                {
+                    SistemaMedico.Data.DbSeeder.Seed(dbContext);
+                }
             }
-            
+
             services.AddAuthentication(options =>
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -41,8 +43,8 @@ namespace SistemaMedico
             .AddCookie()
             .AddGoogle(options =>
             {
-                options.ClientId = configuration["Authentication:Google:ClientId"];
-                options.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+                options.ClientId = configuration["Authentication:Google:ClientId"]!;
+                options.ClientSecret = configuration["Authentication:Google:ClientSecret"]!;
             });
 
             var app = builder.Build();

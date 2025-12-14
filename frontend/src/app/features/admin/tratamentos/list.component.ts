@@ -40,7 +40,7 @@ export class TratamentosListComponent implements OnInit {
   loadEspecialidades(): void {
     this.especialidadeService.getAll().subscribe({
       next: (response) => {
-        this.especialidades = response.$values;
+        this.especialidades = response;
       },
       error: (error) => console.error('Erro ao buscar especialidades:', error)
     });
@@ -54,7 +54,7 @@ export class TratamentosListComponent implements OnInit {
 
     this.tratamentoService.filter(this.filterNome, this.filterEspecialidade, params).subscribe({
       next: (response: PaginatedResponse<Tratamento>) => {
-        this.tratamentos = response.items.$values;
+        this.tratamentos = response.items;
         this.totalPages = response.totalPages;
       },
       error: (error) => console.error('Erro ao buscar tratamentos:', error)

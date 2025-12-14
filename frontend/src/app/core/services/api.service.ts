@@ -3,6 +3,7 @@ import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { Observable, from } from 'rxjs';
 import { API_CONFIG } from '../config/api.config';
 import { AuthService } from './auth.service';
+import { ApiResponse } from '../models/api-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +35,21 @@ export class ApiService {
 
     // Interceptor para tratamento de erros
     this.axiosInstance.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        const body = response.data;
+
+        // Desembrulha o formato { success, data, message } vindo da API
+        if (body && typeof body === 'object' && 'success' in body) {
+          const apiResponse = body as ApiResponse<any>;
+          if (apiResponse.success) {
+            response.data = apiResponse.data as unknown;
+            return response;
+          }
+          return Promise.reject(apiResponse);
+        }
+
+        return response;
+      },
       (error) => {
         if (error.response?.status === 401 || error.response?.status === 403) {
           this.authService.logout();

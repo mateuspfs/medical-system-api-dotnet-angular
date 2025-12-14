@@ -9,8 +9,8 @@ import { Especialidade } from '../models/especialidade.model';
 export class EspecialidadeService {
   constructor(private api: ApiService) {}
 
-  getAll(): Observable<{ $values: Especialidade[] }> {
-    return this.api.get<{ $values: Especialidade[] }>('/Especialidade');
+  getAll(): Observable<Especialidade[]> {
+    return this.api.get<Especialidade[]>('/Especialidade');
   }
 }
 
